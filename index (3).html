@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STRAT-INTEL 2025 | Asymmetric Industrial Audit</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #000000;
+            --surface: #0a0a0a;
+            --surface-hover: #111;
+            --china-red: #ff2a2a;
+            --india-saffron: #ff9933;
+            --twitter-blue: #1d9bf0;
+            --text-primary: #e2e8f0;
+            --text-muted: #71767b;
+            --border: #2f3336;
+            --win-green: #00ba7c;
+            --neon-blue: #0ea5e9;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 0%, #120a0a 0%, #000000 70%);
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        /* --- TICKER TAPE --- */
+        .ticker-wrap {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 32px;
+            background: #000;
+            border-bottom: 1px solid var(--border);
+            overflow: hidden;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+        }
+
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            animation: ticker 40s linear infinite;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .ticker span { margin-right: 50px; }
+        .tick-alert { color: var(--china-red); }
+        .tick-win { color: var(--win-green); }
+
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } 
+        }
+
+        /* --- NAV & HERO --- */
+        .top-bar {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 32px;
+            z-index: 1000;
+        }
+
+        .logo { 
+            font-weight: 800; 
+            letter-spacing: 1px; 
+            font-size: 1rem; 
+            color: #fff;
+        }
+        .logo span { color: var(--china-red); }
+
+        .hero {
+            padding: 100px 5% 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .intel-tag {
+            color: var(--neon-blue);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(14, 165, 233, 0.05);
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        h1 { 
+            font-size: clamp(2.5rem, 5vw, 4.5rem); 
+            font-weight: 700; 
+            margin: 0 0 20px; 
+            line-height: 1.1; 
+            background: linear-gradient(180deg, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sub-desc { 
+            font-size: 1.1rem; 
+            color: var(--text-muted); 
+            max-width: 700px; 
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* --- GRID SYSTEM --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            padding: 0 5% 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 25px;
+            border-radius: 12px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            border-color: #444;
+            background: var(--surface-hover);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 15px;
+        }
+
+        .metric-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-row { margin-bottom: 20px; }
+        .stat-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; }
+        .stat-bar-bg { height: 8px; background: #1a1a1a; border-radius: 4px; overflow: hidden; }
+        .stat-bar-fill { height: 100%; border-radius: 4px; position: relative; }
+        
+        .conclusion {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border);
+            line-height: 1.5;
+        }
+        
+        .alert-text { color: var(--china-red); font-weight: 600; }
+
+        /* --- ROAST & SENTIMENT SECTIONS --- */
+        .roast-section, .china-support-section {
+            padding: 80px 5%;
+            border-top: 1px solid var(--border);
+        }
+
+        .roast-section { background: #000; }
+        
+        .china-support-section {
+            background: linear-gradient(180deg, #000 0%, #0d0202 100%);
+        }
+
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.5rem; color: #fff; margin-bottom: 10px; }
+        
+        .roast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Tweet Card Styling */
+        .tweet-card, .support-card {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.2s;
+        }
+
+        .tweet-card:hover { border-color: #333; }
+
+        .support-card {
+            box-shadow: 0 10px 40px rgba(255, 42, 42, 0.05);
+        }
+
+        .tweet-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .pfp {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #333;
+            flex-shrink: 0;
+        }
+
+        .user-info { display: flex; flex-direction: column; justify-content: center; }
+        .name-row { display: flex; align-items: center; gap: 4px; }
+        .name-row b { color: #e7e9ea; font-size: 0.95rem; }
+        .gold-check { color: #ffd700; }
+        .blue-check { color: #1d9bf0; }
+        .gray-check { color: #829aab; }
+        .handle { color: var(--text-muted); font-size: 0.9rem; }
+
+        .tweet-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            color: #e7e9ea;
+        }
+
+        .tweet-stats {
+            display: flex;
+            gap: 15px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Community Note */
+        .community-note {
+            background: #15181c; 
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: auto;
+            border-left: 4px solid var(--china-red);
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        .note-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #e7e9ea;
+            font-size: 0.85rem;
+        }
+
+        .note-body {
+            font-size: 0.9rem;
+            color: #e7e9ea;
+            line-height: 1.4;
+        }
+        .note-body ul { margin: 5px 0 10px 20px; padding: 0; }
+        .note-body li { margin-bottom: 5px; }
+
+        /* Source Button */
+        .source-btn, .x-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #888;
+            border: 1px solid #333;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-top: 15px;
+            transition: all 0.2s;
+            width: fit-content;
+        }
+        .source-btn:hover, .x-link-btn:hover {
+            color: #fff;
+            border-color: #666;
+            background: #111;
+        }
+
+        .x-link-btn {
+            margin-top: 10px;
+            width: 100%;
+            justify-content: center;
+            border-color: rgba(29, 155, 240, 0.3);
+            color: var(--twitter-blue);
+        }
+        
+        .x-link-btn:hover {
+            background: rgba(29, 155, 240, 0.1);
+            border-color: var(--twitter-blue);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 50px 5%;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: #444;
+            background: #020202;
+        }
+
+        @media (max-width: 768px) {
+            .ticker-wrap { display: flex; }
+            .top-bar { top: 32px; padding: 10px 5%; }
+            .hero { padding: 60px 5% 40px; }
+            h1 { font-size: 2.2rem; }
+            .grid-container, .roast-grid { grid-template-columns: 1fr; }
+            .tweet-stats span:nth-child(2), .tweet-stats span:nth-child(3) { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LIVE DATA TICKER -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <span class="tick-alert">[ALERT] India-China Trade Deficit surges to $100 Billion (FY25 Est)</span>
+            <span>[MARKET] China Solar Install: 216GW+ (2024) | India Solar Install: 15GW</span>
+            <span class="tick-alert">[INFRA] Bihar: 12 bridges collapse in 1 month</span>
+            <span>[TECH] China graduates 11x more engineers than US/India combined</span>
+            <span class="tick-win">[DATA] China controls 80% of global battery supply chain</span>
+            <!-- Duplicate for infinite loop illusion -->
+            <span class="tick-alert">[ALERT] India-China Trade Deficit surges to $100 Billion (FY25 Est)</span>
+            <span>[MARKET] China Solar Install: 216GW+ (2024) | India Solar Install: 15GW</span>
+        </div>
+    </div>
+
+    <nav class="top-bar">
+        <div class="logo">STRAT<span>INTEL</span> // AUDIT 2025</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.65rem; color: #fff; text-align: right;">
+            STATUS: <span style="color: var(--china-red);">ASYMMETRY CONFIRMED</span>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <span class="intel-tag">Confidential Strategic Assessment</span>
+        <h1>The Industrial Gap<br>Is Not Closing.</h1>
+        <p class="sub-desc">
+            A verified 2025 audit of structural leadership. While India focuses on "Atmanirbhar" marketing, the metrics reveal a deepening dependency on the Chinese supply chain.
+        </p>
+    </header>
+
+    <div class="grid-container">
+        <!-- CARD 1: THE TRADE REALITY -->
+        <div class="card" style="border-color: var(--china-red);">
+            <div class="card-header">
+                <span class="metric-title" style="color: var(--china-red);">The Deficit Trap</span>
+                <span class="source-tag">SOURCE: COMMERCE MINISTRY / GTRI</span>
+            </div>
+            <div class="stat-row">
+                <div class="stat-meta">
+                    <span><b>India Imports (from CN)</b></span>
+                    <span style="color: var(--china-red);">$101+ Billion</span>
+                </div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 95%; background: var(--china-red);"></div></div>
+            </div>
+            <div class="stat-row">
+                <div class="stat-meta">
+                    <span><b>India Exports (to CN)</b></span>
+                    <span style="color: var(--india-saffron);">$16 Billion</span>
+                </div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 15%; background: var(--india-saffron);"></div></div>
+            </div>
+            <div class="conclusion">
+                <span class="alert-text">CRITICAL:</span> India buys electronics and machinery but sells raw materials (Iron Ore, Cotton). A classic colonial trade pattern.
+            </div>
+        </div>
+
+        <!-- CARD 2: INNOVATION INDEX -->
+        <div class="card">
+            <div class="card-header">
+                <span class="metric-title">IP (Patents)</span>
+                <span class="source-tag">SOURCE: WIPO</span>
+            </div>
+            <div class="stat-row">
+                <div class="stat-meta">
+                    <span><b>China (Filings)</b></span>
+                    <span>1.58 Million</span>
+                </div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 98%; background: var(--china-red);"></div></div>
+            </div>
+            <div class="stat-row">
+                <div class="stat-meta">
+                    <span><b>India (Filings)</b></span>
+                    <span>~64,000</span>
+                </div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 6%; background: var(--india-saffron);"></div></div>
+            </div>
+            <div class="conclusion">
+                China files more patents in <b>2 weeks</b> than India does in a year. The R&D gap is widening, not shrinking.
+            </div>
+        </div>
+
+        <!-- CARD 3: GREEN ENERGY -->
+        <div class="card">
+            <div class="card-header">
+                <span class="metric-title">Solar Added (2023-24)</span>
+                <span class="source-tag">SOURCE: IEA / MERCOM</span>
+            </div>
+            <div class="stat-row">
+                <div class="stat-meta">
+                    <span><b>China</b></span>
+                    <span>216 GW</span>
+                </div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 90%; background: var(--china-red);"></div></div>
+            </div>
+            <div class="stat-row">
+                <div class="stat-meta">
+                    <span><b>India</b></span>
+                    <span>15 GW</span>
+                </div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 14%; background: var(--india-saffron);"></div></div>
+            </div>
+            <div class="conclusion">
+                China added more solar capacity in a single year than the US has in its entire history. India missed its 2022 targets.
+            </div>
+        </div>
+
+        <!-- CARD 4: INFRASTRUCTURE -->
+        <div class="card">
+            <div class="card-header">
+                <span class="metric-title">High Speed Rail</span>
+                <span class="source-tag">SOURCE: UIC</span>
+            </div>
+            <div style="display: flex; gap: 20px; align-items: center; justify-content: center; margin-top: 20px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 1.8rem; font-weight: 700; color: var(--china-red);">45k</div>
+                    <div style="font-size: 0.6rem; color: #888;">KM OPERATIONAL</div>
+                    <div style="font-size: 0.8rem; margin-top: 5px;">CHINA</div>
+                </div>
+                <div style="height: 40px; width: 1px; background: #333;"></div>
+                <div style="text-align: center;">
+                    <div style="font-size: 1.8rem; font-weight: 700; color: var(--india-saffron);">0</div>
+                    <div style="font-size: 0.6rem; color: #888;">KM OPERATIONAL</div>
+                    <div style="font-size: 0.8rem; margin-top: 5px;">INDIA</div>
+                </div>
+            </div>
+            <div class="conclusion" style="margin-top: 20px;">
+                China connects 95% of its cities with HSR. India's Mumbai-Ahmedabad project is delayed 5+ years.
+            </div>
+        </div>
+    </div>
+
+    <!-- ROAST SECTION -->
+    <section class="roast-section">
+        <div class="section-header">
+            <h2>PR Narrative vs. System Error</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Comparing Political "Masterstrokes" to Ground Reality.</p>
+        </div>
+
+        <div class="roast-grid">
+            
+            <!-- TWEET 1: INFRASTRUCTURE -->
+            <div class="tweet-card">
+                <div class="tweet-header">
+                    <div class="pfp" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/1/1e/Bharatiya_Janata_Party_logo.svg/1200px-Bharatiya_Janata_Party_logo.svg.png');"></div>
+                    <div class="user-info">
+                        <div class="name-row">
+                            <b>BJP</b>
+                            <i class="fas fa-certificate gold-check"></i>
+                        </div>
+                        <div class="handle">@BJP4India</div>
+                    </div>
+                </div>
+                <div class="tweet-text">
+                    Under PM Modi's leadership, India's infrastructure is becoming world-class! New India is building at record speed. 🇮🇳🚀 #ViksitBharat
+                </div>
+                <div class="tweet-stats">
+                    <span>11:30 AM · Jul 02, 2024</span>
+                    <span><b>2.1K</b> Reposts</span>
+                    <span><b>5.4K</b> Likes</span>
+                </div>
+
+                <!-- NOTE -->
+                <div class="community-note">
+                    <div class="note-header">
+                        <i class="fas fa-users"></i> Readers added context
+                    </div>
+                    <div class="note-body">
+                        <b>Infrastructure Collapse (2024):</b>
+                        <ul>
+                            <li><b>Bihar:</b> 12 bridges collapsed in less than a month (June-July 2024).</li>
+                            <li><b>Airports:</b> Roofs collapsed at Delhi T1 (fatal), Jabalpur, and Rajkot airports.</li>
+                        </ul>
+                    </div>
+                </div>
+                <a href="https://twitter.com/search?q=Bihar%20bridge%20collapse%202024&src=typed_query" target="_blank" class="x-link-btn">
+                    <i class="fa-brands fa-x-twitter"></i> Verify on X
+                </a>
+            </div>
+
+            <!-- TWEET 2: ECONOMY -->
+            <div class="tweet-card">
+                <div class="tweet-header">
+                    <div class="pfp" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/c/c0/Nirmala_Sitharaman_2019_%28cropped%29.jpg');"></div>
+                    <div class="user-info">
+                        <div class="name-row">
+                            <b>Nirmala Sitharaman</b>
+                            <i class="fas fa-check-circle gray-check"></i>
+                        </div>
+                        <div class="handle">@nsitharaman</div>
+                    </div>
+                </div>
+                <div class="tweet-text">
+                    India is the fastest growing major economy. We have eliminated extreme poverty. The world is looking at India!
+                </div>
+                <div class="tweet-stats">
+                    <span>4:00 PM · Dec 20, 2024</span>
+                    <span><b>1.2K</b> Reposts</span>
+                    <span><b>3.8K</b> Likes</span>
+                </div>
+
+                <!-- NOTE -->
+                <div class="community-note">
+                    <div class="note-header">
+                        <i class="fas fa-users"></i> Readers added context
+                    </div>
+                    <div class="note-body">
+                        If extreme poverty is gone, why did the Government extend the <b>Free Food Grain Scheme (PMGKAY)</b> for 800 million people (approx 60% of population) for another 5 years starting 2024?
+                    </div>
+                </div>
+                <a href="https://twitter.com/search?q=PMGKAY%20extended%205%20years%2080%20crore&src=typed_query" target="_blank" class="x-link-btn">
+                    <i class="fa-brands fa-x-twitter"></i> Verify on X
+                </a>
+            </div>
+
+            <!-- TWEET 3: BORDER -->
+            <div class="tweet-card">
+                <div class="tweet-header">
+                    <div class="pfp" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/8c/Narendra_Modi_2021.jpg');"></div>
+                    <div class="user-info">
+                        <div class="name-row">
+                            <b>Narendra Modi</b>
+                            <i class="fas fa-check-circle gray-check"></i>
+                        </div>
+                        <div class="handle">@narendramodi</div>
+                    </div>
+                </div>
+                <div class="tweet-text">
+                    Our borders are more secure than ever. No one has entered our territory, and no one is sitting there. 🇮🇳
+                </div>
+                <div class="tweet-stats">
+                    <span>9:00 AM · Aug 15, 2024</span>
+                    <span><b>15K</b> Reposts</span>
+                    <span><b>45K</b> Likes</span>
+                </div>
+
+                <!-- NOTE -->
+                <div class="community-note">
+                    <div class="note-header">
+                        <i class="fas fa-users"></i> Readers added context
+                    </div>
+                    <div class="note-body">
+                        <b>Fact Check:</b>
+                        A research paper by a senior police officer (PD Nitya) submitted at the 2023 DGP Conference admitted India has <b>lost access to 26 out of 65 Patrolling Points</b> in Eastern Ladakh that it previously controlled.
+                    </div>
+                </div>
+                <a href="https://twitter.com/search?q=India%20lost%2026%20patrolling%20points%20Ladakh&src=typed_query" target="_blank" class="x-link-btn">
+                    <i class="fa-brands fa-x-twitter"></i> Verify on X
+                </a>
+            </div>
+
+            <!-- TWEET 4: JOBS -->
+            <div class="tweet-card">
+                <div class="tweet-header">
+                    <div class="pfp" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/1/1e/Bharatiya_Janata_Party_logo.svg/1200px-Bharatiya_Janata_Party_logo.svg.png');"></div>
+                    <div class="user-info">
+                        <div class="name-row">
+                            <b>BJP</b>
+                            <i class="fas fa-certificate gold-check"></i>
+                        </div>
+                        <div class="handle">@BJP4India</div>
+                    </div>
+                </div>
+                <div class="tweet-text">
+                    Youth Power! India is the Startup Capital of the world. Jobs are being created in record numbers.
+                </div>
+                <div class="tweet-stats">
+                    <span>2:15 PM · Dec 22, 2024</span>
+                    <span><b>3.1K</b> Reposts</span>
+                    <span><b>7.2K</b> Likes</span>
+                </div>
+
+                <!-- NOTE -->
+                <div class="community-note">
+                    <div class="note-header">
+                        <i class="fas fa-users"></i> Readers added context
+                    </div>
+                    <div class="note-body">
+                        <b>Employment Reality:</b>
+                        <br>1. <b>IIT Bombay</b> (India's top engineering college) failed to place ~36% of its graduating batch in 2024.
+                        <br>2. ILO Report 2024 states 83% of India's unemployed are youth.
+                    </div>
+                </div>
+                <a href="https://twitter.com/search?q=IIT%20Bombay%2036%25%20unplaced%202024&src=typed_query" target="_blank" class="x-link-btn">
+                    <i class="fa-brands fa-x-twitter"></i> Verify on X
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CHINA SUPPORT SECTION -->
+    <section class="china-support-section">
+        <h2 style="color: #fff; text-transform: uppercase; margin-bottom: 40px; font-size: 1.5rem;">Global Market Sentiment</h2>
+        
+        <div class="roast-grid"> <!-- Reusing Grid Layout -->
+            
+            <!-- ELON MUSK CARD -->
+            <div class="support-card">
+                <div class="tweet-header">
+                    <div class="pfp" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg');"></div>
+                    <div class="user-info">
+                        <div class="name-row">
+                            <b>Elon Musk</b>
+                            <i class="fas fa-check-circle blue-check"></i>
+                        </div>
+                        <div class="handle">@elonmusk</div>
+                    </div>
+                </div>
+                
+                <div class="tweet-text">
+                    "China rocks in my opinion. The energy in China is great. People there are not just burning the midnight oil, they are burning the 3 a.m. oil. They are extremely competitive, hard-working and smart."
+                </div>
+                
+                <div class="tweet-stats" style="border: none; margin-bottom: 0;">
+                     <span style="color: var(--text-muted); font-size: 0.8rem;">Context: Discussing manufacturing efficiency.</span>
+                </div>
+                <a href="https://www.theguardian.com/technology/2022/may/12/elon-musk-praises-chinese-workers-for-extreme-work-culture" target="_blank" class="source-btn">
+                    <i class="fas fa-external-link-alt"></i> Verify Source (The Guardian)
+                </a>
+            </div>
+
+            <!-- BLOOMBERG ECONOMICS CARD -->
+            <div class="support-card">
+                <div class="tweet-header">
+                    <div class="pfp" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Bloomberg_News_Logo.svg/1200px-Bloomberg_News_Logo.svg.png'); background-color: white; background-size: contain; background-repeat: no-repeat;"></div>
+                    <div class="user-info">
+                        <div class="name-row">
+                            <b>Bloomberg Economics</b>
+                            <i class="fas fa-certificate gold-check"></i>
+                        </div>
+                        <div class="handle">@economics</div>
+                    </div>
+                </div>
+                
+                <div class="tweet-text">
+                    Despite tariffs and "Make in India", India's reliance on Chinese industrial goods is deepening.
+                    <br><br>
+                    <b>Data Point:</b> Imports from China surged to record levels (approx $100 Billion) in FY24/25. India remains dependent on China for critical solar and electronic components.
+                </div>
+                
+                <a href="https://economictimes.indiatimes.com/news/economy/foreign-trade/indias-exports-to-china-skyrocket-but-a-106-billion-trade-deficit-looms/articleshow/126072258.cms" target="_blank" class="source-btn">
+                    <i class="fas fa-external-link-alt"></i> Verify Data (Economic Times)
+                </a>
+            </div>
+
+            <!-- TIM COOK / APPLE CARD -->
+            <div class="support-card">
+                <div class="tweet-header">
+                    <div class="pfp" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/Tim_Cook_2009_revised.jpg');"></div>
+                    <div class="user-info">
+                        <div class="name-row">
+                            <b>Tim Cook</b>
+                            <i class="fas fa-check-circle blue-check"></i>
+                        </div>
+                        <div class="handle">@tim_cook</div>
+                    </div>
+                </div>
+                
+                <div class="tweet-text">
+                    "There's a confusion about China... the popular conception is that companies come to China because of low labor cost. I'm not sure what part of China they go to, but the truth is China stopped being the low-labor-cost country many years ago. It is because of the <b>skill</b>."
+                </div>
+
+                <a href="https://www.inc.com/glenn-leibowitz/apple-ceo-tim-cook-this-is-number-1-reason-we-make-iphones-in-china-its-not-what-you-think.html" target="_blank" class="source-btn">
+                    <i class="fas fa-external-link-alt"></i> Verify Quote (Inc.com)
+                </a>
+            </div>
+            
+        </div>
+    </section>
+
+    <footer>
+        <p>AUDIT COMPLETE. DATA SOURCES: GTRI REPORT, ILO 2024, WIPO, INDIAN EXPRESS INVESTIGATIONS.</p>
+        <p>STRAT-INTEL // NO OPTICS. ONLY METRICS.</p>
+    </footer>
+
+    <script>
+        // Animate bars on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.stat-bar-fill');
+                    bars.forEach(bar => {
+                        const width = bar.style.width;
+                        bar.style.width = '0';
+                        setTimeout(() => {
+                            bar.style.transition = 'width 1.5s cubic-bezier(0.22, 1, 0.36, 1)';
+                            bar.style.width = width;
+                        }, 100);
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.card, .support-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
